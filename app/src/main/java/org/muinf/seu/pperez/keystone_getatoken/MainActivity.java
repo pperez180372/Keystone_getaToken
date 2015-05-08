@@ -64,10 +64,27 @@ public class MainActivity extends ActionBarActivity {
                         // Only display the first 500 characters of the retrieved
                         // web page content.
                         int len = 500;
-                        String HeaderAccept = "application/xml";
-                        String HeaderContent = "application/xml";
-                        String HeaderService = "myTenant";
-                        String payload = "<?xml version=\"1.0\" encoding=\"utf-8\"?><Request xsi:schemaLocation=\"urn:oasis:names:tc:xacml:3.0:core:schema:wd-17 http://docs.oasis-open.org/xacml/3.0/xacml-core-v3-schema-wd-17.xsd\" ReturnPolicyIdList=\"false\" CombinedDecision=\"false\" xmlns=\"urn:oasis:names:tc:xacml:3.0:core:schema:wd-17\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Attributes Category=\"urn:oasis:names:tc:xacml:1.0:subject-category:access-subject\"><Attribute IncludeInResult=\"false\" AttributeId=\"urn:oasis:names:tc:xacml:1.0:subject:subject-id\"><AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">role12345</AttributeValue></Attribute></Attributes><Attributes Category=\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\"> <Attribute IncludeInResult=\"false\" AttributeId=\"urn:oasis:names:tc:xacml:1.0:resource:resource-id\"><AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">fiware:orion:tenant1234:us-west-1:res9876</AttributeValue></Attribute></Attributes><Attributes Category=\"urn:oasis:names:tc:xacml:3.0:attribute-category:action\"><Attribute IncludeInResult=\"false\" AttributeId=\"urn:oasis:names:tc:xacml:1.0:action:action-id\"><AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">read</AttributeValue></Attribute> </Attributes></Request>";
+                       // String HeaderAccept = "application/xml";
+                        String HeaderContent = "application/json";
+                        String payload = "{ \"auth\": {" +
+                                "    \"identity\": {" +
+                                "      \"methods\": [\"password\"]," +
+                                "      \"password\": {" +
+                                "        \"user\": {" +
+                                "          \"name\": \"admin\"," +
+                                "          \"domain\": { \"id\": \"default\" }," +
+                                "          \"password\": \"adminpwd\"" +
+                                "        }" +
+                                "      }" +
+                                "    }," +
+                                "    \"scope\": {" +
+                                "      \"project\": {" +
+                                "        \"name\": \"demo\"," +
+                                "        \"domain\": { \"id\": \"default\" }" +
+                                "      }" +
+                                "    }" +
+                                "  }" +
+                                "}";
                         // String encodedData = URLEncoder.encode(payload, "UTF-8");
                         // String encodedData = payload;
                         String leng = null;
@@ -81,16 +98,16 @@ public class MainActivity extends ActionBarActivity {
 
                             URL url = null;
 
-                            url = new URL("http://pperez-seu-ks.disca.upv.es:8080/pdp/v3");
+                            url = new URL("http://pperez-seu-ks.disca.upv.es:5000/v3/tokens");
 
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setReadTimeout(10000 /* milliseconds */);
                             conn.setConnectTimeout(15000 /* milliseconds */);
                             conn.setRequestMethod("POST");
 
-                            conn.setRequestProperty("Accept", HeaderAccept);
+                            //conn.setRequestProperty("Accept", HeaderAccept);
                             conn.setRequestProperty("Content-type", HeaderContent);
-                            conn.setRequestProperty("Fiware-Service", HeaderService);
+                            //conn.setRequestProperty("Fiware-Service", HeaderService);
                             conn.setRequestProperty("Content-Length", leng);
                             conn.setDoOutput(true);
 
