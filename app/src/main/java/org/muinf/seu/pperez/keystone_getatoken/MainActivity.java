@@ -30,146 +30,23 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import android.util.Log;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    View rootView;
 
-    private EditText tuser;
-    private EditText tpassword;
-    private TextView ttoken;
+    DownloadWebpageTask ay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.activity_main);
 
-        tuser=  (EditText) findViewById(R.id.user);
-        tpassword=  (EditText)  findViewById(R.id.passwd);
-        ttoken =   (TextView)  findViewById(R.id.token);
-        Button Botonw = (Button) findViewById(R.id.gettokenbutton);
-
-
-        Botonw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                class DownloadWebpageTask extends AsyncTask<String, Void, String> {
-                    @Override
-                    protected String doInBackground(String... urls) {
-
-                        Map<String, List<String>> rr;
-                        String res = "";
-                        InputStream is = null;
-                        // Only display the first 500 characters of the retrieved
-                        // web page content.
-                        int len = 500;
-                       // String HeaderAccept = "application/xml";
-                        String HeaderContent = "application/json";
-                        String payload = "{ \"auth\": {" +
-                                "    \"identity\": {" +
-                                "      \"methods\": [\"password\"]," +
-                                "      \"password\": {" +
-                                "        \"user\": {" +
-                                "          \"name\": \"admin\"," +
-                                "          \"domain\": { \"id\": \"default\" }," +
-                                "          \"password\": \"adminpwd\"" +
-                                "        }" +
-                                "      }" +
-                                "    }," +
-                                "    \"scope\": {" +
-                                "      \"project\": {" +
-                                "        \"name\": \"demo\"," +
-                                "        \"domain\": { \"id\": \"default\" }" +
-                                "      }" +
-                                "    }" +
-                                "  }" +
-                                "}";
-                        // String encodedData = URLEncoder.encode(payload, "UTF-8");
-                        // String encodedData = payload;
-                        String leng = null;
-                        try {
-                            leng = Integer.toString(payload.getBytes("UTF-8").length);
-
-                            OutputStreamWriter wr = null;
-                            BufferedReader rd = null;
-                            StringBuilder sb = null;
-
-
-                            URL url = null;
-
-                            url = new URL("http://pperez-seu-ks.disca.upv.es:5000/v3/tokens");
-
-                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                            conn.setReadTimeout(10000 /* milliseconds */);
-                            conn.setConnectTimeout(15000 /* milliseconds */);
-                            conn.setRequestMethod("POST");
-
-                            //conn.setRequestProperty("Accept", HeaderAccept);
-                            conn.setRequestProperty("Content-type", HeaderContent);
-                            //conn.setRequestProperty("Fiware-Service", HeaderService);
-                            conn.setRequestProperty("Content-Length", leng);
-                            conn.setDoOutput(true);
-
-                            OutputStream os = conn.getOutputStream();
-                            os.write(payload.getBytes("UTF-8"));
-                            os.flush();
-                            os.close();
-
-
-                            int rc = conn.getResponseCode();
-                            String resp = conn.getContentEncoding();
-                            is = conn.getInputStream();
-
-                            if (rc == 200) {
-                                //read the result from the server
-                                rd = new BufferedReader(new InputStreamReader(is));
-                                //res=rd.readLine();
-                                // cabeceras de recepcion
-                                rr = conn.getHeaderFields();
-
-
-                            } else {
-                                rr = null;
-                                System.out.println("http response code error: " + rc + "\n");
-
-                            }
-
-
-                            System.out.println("headers: " + rr.toString());
-
-                            // Convert the InputStream into a string
-                            Reader reader = null;
-                            reader = new InputStreamReader(conn.getInputStream(), "UTF-8");
-                            char[] buffer = new char[len];
-                            reader.read(buffer);
-                            return new String(buffer);
-
-
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        } catch (ProtocolException e) {
-                            e.printStackTrace();
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    return "error";
-                }
-                    // onPostExecute displays the results of the AsyncTask.
-                    @Override
-                    protected void onPostExecute(String result) {
-
-                        ttoken.setText(result);
-                    }
-                }
-
-
-            }
-        });
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -205,16 +82,167 @@ public class MainActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public class PlaceholderFragment extends Fragment implements View.OnClickListener {
+
+
+
+        Button Botonw;
+
+
 
         public PlaceholderFragment() {
+        }
+
+        public void onClick(View v) {
+            System.out.println(v.toString());
+
+            //ay.execute("");
+
+           // AsyncTask<String, Void, String> execute = DownloadWebpageTask.execute("dsdskj");
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            Botonw = (Button) rootView.findViewById(R.id.gettokenbutton);
+//            Botonw.setOnClickListener(this);
+            Botonw.setOnClickListener(               new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ay=new DownloadWebpageTask();
+                    ay.execute("");//System.out.print("djksdjsk");
+
+                };
+            });
+
             return rootView;
         }
+
     }
+
+
+
+    class DownloadWebpageTask extends AsyncTask<String, Void, String> {
+
+        String res;
+
+        protected String doInBackground(String... urls) {
+
+            Map<String, List<String>> rr;
+            String res = "";
+            InputStream is = null;
+            // Only display the first 500 characters of the retrieved
+            // web page content.
+            int len = 500;
+            // View rootView = findViewById(R.layout.fragment_main);
+
+            EditText tuser;
+            EditText tpassword;
+            TextView ttoken;
+            TextView tdomain;
+
+            tuser = (EditText) rootView.findViewById(R.id.user);
+            tpassword=  (EditText)  rootView.findViewById(R.id.passwd);
+            tdomain=  (EditText)  rootView.findViewById(R.id.domain);
+            ttoken =   (TextView)  rootView.findViewById(R.id.token);
+
+            Log.v("EditText", tuser.getText().toString());
+
+            String username = tuser.getText().toString(); //"Android_SEU_3n5_1";//
+            String passwd = tpassword.getText().toString(); // "sensor";//
+            String domain = tdomain.getText().toString(); // "Asignatura SEU";
+
+            // String HeaderAccept = "application/xml";
+            String HeaderContent = "application/json";
+            String payload = "{ \"auth\": {" +
+                    "    \"identity\": {" +
+                    "      \"methods\": [\"password\"]," +
+                    "      \"password\": {" +
+                    "        \"user\": {\"name\": \""+username+"\", \"domain\": { \"name\": \""+domain+"\" }, \"password\": \""+passwd+"\"}" +
+                    "      }" +
+                    "    }" +
+                   "  }" +
+                    "}";
+
+            // String encodedData = URLEncoder.encode(payload, "UTF-8");
+            // String encodedData = payload;
+            String leng = null;
+            try {
+                leng = Integer.toString(payload.getBytes("UTF-8").length);
+
+                OutputStreamWriter wr = null;
+                BufferedReader rd = null;
+                StringBuilder sb = null;
+
+
+                URL url = null;
+
+                url = new URL("http://pperez-seu-ks.disca.upv.es:5000/v3/auth/tokens");
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 ); // miliseconds
+                conn.setConnectTimeout(15000 );
+                conn.setRequestMethod("POST");
+
+                //conn.setRequestProperty("Accept", HeaderAccept);
+                conn.setRequestProperty("Content-type", HeaderContent);
+                //conn.setRequestProperty("Fiware-Service", HeaderService);
+                conn.setRequestProperty("Content-Length", leng);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                os.write(payload.getBytes("UTF-8"));
+                os.flush();
+                os.close();
+
+
+                int rc = conn.getResponseCode();
+                String resp = conn.getContentEncoding();
+                is = conn.getInputStream();
+
+                if (rc == 201) {
+                    //read the result from the server
+                    rd = new BufferedReader(new InputStreamReader(is));
+                    //res=rd.readLine();
+                    // cabeceras de recepcion
+                    rr = conn.getHeaderFields();
+                    System.out.println("headers: " + rr.toString());
+
+                } else {
+                    rr = null;
+                    System.out.println("http response code error: " + rc + "\n");
+
+                }
+
+
+                String cad=rr.get("X-Subject-Token").get(0);
+                return cad;
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return "error";
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            res=result;
+            TextView ttoken =   (TextView)  rootView.findViewById(R.id.token);
+            ttoken.setText(result);
+        }
+    }
+
+
 }

@@ -35,13 +35,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:text="Name"
+                android:text="Por ejemplo: Android_SEU_3n5_1"
 
                 android:id="@+id/user"
                 android:textSize="@dimen/abc_text_size_small_material" />
 
             </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="16pt"
+            android:weightSum="1">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Domain: "
+                android:id="@+id/textView_domain"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="por ejemplo: Asignatura SEU"
+
+                android:id="@+id/domain"
+                android:textSize="@dimen/abc_text_size_small_material" />
+
+        </LinearLayout>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -59,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="16pt"
                 android:inputType="textPassword"
-
+                android:text="sensor"
                 android:id="@+id/passwd"
                 android:textSize="@dimen/abc_text_size_small_material" />
             </LinearLayout>
